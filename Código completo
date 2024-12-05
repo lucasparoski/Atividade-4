@@ -1,0 +1,87 @@
+import random
+
+
+palavras = ["python", "desenvolvimento", "programacao", "algoritmo", "forca"]
+
+palavra_secreta = random.choice(palavras)
+
+palavra_oculta = ["_"] * len(palavra_secreta)
+
+tentativas = 6
+
+letras_erradas = []
+
+dicas_usadas = 0
+
+
+def mostrar_estado():
+    print("Palavra:", " ".join(palavra_oculta))
+    print("Letras erradas:", ", ".join(letras_erradas))
+    print("Tentativas restantes:", tentativas)
+    print(f"Dicas usadas: {dicas_usadas}")
+
+
+def dar_dica():
+    global tentativas, dicas_usadas
+   
+    letras_restantes = [i for i in range(len(palavra_secreta)) if palavra_oculta[i] == "_"]
+    if letras_restantes:
+        
+        indice_dica = random.choice(letras_restantes)
+        palavra_oculta[indice_dica] = palavra_secreta[indice_dica]
+        dicas_usadas += 1
+        tentativas -= 1  # Diminuir o número de tentativas ao dar uma dica
+        print(f"Dica: A letra '{palavra_secreta[indice_dica]}' foi revelada!")
+    else:
+        print("Não há mais dicas disponíveis, pois todas as letras já foram reveladas.")
+
+
+def jogar_forca():
+    global tentativas
+    
+    while tentativas > 0:
+        mostrar_estado()
+        
+        
+        acao = input("Digite uma letra ou 'dica' para uma dica: ").lower()
+        
+       
+        if acao == "dica":
+            if dicas_usadas < 2:  # Limitar o número de dicas a 2
+                dar_dica()
+            else:
+                print("Você já usou o número máximo de dicas!")
+            continue
+        
+       
+        elif len(acao) == 1 and acao.isalpha():
+            # Checar se a letra já foi usada
+            if acao in letras_erradas or acao in palavra_oculta:
+                print("Você já tentou essa letra. Tente outra.")
+                continue
+
+           
+            if acao in palavra_secreta:
+                print("Boa! A letra está na palavra.")
+                # Atualizar a palavra oculta
+                for i in range(len(palavra_secreta)):
+                    if palavra_secreta[i] == acao:
+                        palavra_oculta[i] = acao
+            else:
+                tentativas -= 1
+                letras_erradas.append(acao)
+                print("A letra não está na palavra.")
+        
+        else:
+            print("Entrada inválida! Digite uma letra válida ou 'dica'.")
+        
+       
+        if "_" not in palavra_oculta:
+            print("Parabéns! Você adivinhou a palavra:", palavra_secreta)
+            break
+
+    if tentativas == 0:
+        print("Você perdeu! A palavra era:", palavra_secreta)
+
+
+jogar_forca()
